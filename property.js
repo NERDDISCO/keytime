@@ -8,44 +8,50 @@
 //whether or not your data is hidden, or what type
 //of property you might be dealing with
 
-var keyframes = require('keyframes')
-var xtend = require('xtend')
+import keyframes from 'keyframes';
 
-function Property(data) {
-	if (!(this instanceof Property)) 
-		return new Property(data)
+import xtend from 'xtend';
 
-	this.keyframes = keyframes()
-	this.value = null
-	this.name = ''
-	if (data)
-		this.load(data)
+export default class Property {
+
+  constructor(data) {
+    this.keyframes = keyframes()
+    this.value = null
+    this.name = ''
+
+    if (data) {
+      this.load(data)
+    }
+  }
+
+  dispose() {
+    this.keyframes.clear()
+  }
+  
+  export() {
+    return xtend(this, {
+      keyframes: this.keyframes.frames
+    })
+  }
+  
+  load(data) {
+    this.dispose()
+  
+    if (!data) {
+      return
+    }
+    
+    for (var k in data) {
+      if (!data.hasOwnProperty(k)) {
+        continue
+      }
+
+      if (k === 'keyframes') {
+        this.keyframes.frames = data.keyframes
+      } else {
+        this[k] = data[k]
+      }
+    }
+
+  }
 }
-
-Property.prototype.dispose = function() {
-	this.keyframes.clear()
-}
-
-Property.prototype.export = function() {
-	return xtend(this, {
-		keyframes: this.keyframes.frames
-	})
-}
-
-Property.prototype.load = function(data) {
-	this.dispose()
-
-	if (!data)
-		return
-	
-	for (var k in data) {
-		if (!data.hasOwnProperty(k))
-			continue
-		if (k === 'keyframes')
-			this.keyframes.frames = data.keyframes
-		else
-			this[k] = data[k]
-	}
-}
-
-module.exports = Property

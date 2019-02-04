@@ -1,5 +1,5 @@
-var Timeline = require('./')
-var test = require('tape').test
+import Timeline from './';
+import { test } from 'tape';
 
 var data1 = [
 	{ name: 'position', value: [20, 20] },
